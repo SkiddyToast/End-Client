@@ -1,0 +1,91 @@
+package paradox.client.main.module.modules;
+ 
+import java.util.Iterator;
+import java.util.List;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
+
+import org.lwjgl.input.Keyboard;
+
+import paradox.client.main.module.Category;
+import paradox.client.main.module.Module;
+ 
+public class KillAura extends Module {
+   
+    public KillAura() {
+        super("KillAura", Category.COMBAT, Keyboard.KEY_P);
+    }
+    
+    int delay;
+
+    @Override
+    public void onPreUpdate() {
+       
+        if(!this.isEnabled())
+            return;
+        
+        List list = mc.world.playerEntities;
+		delay++;
+       
+        for (int k = 0; k < list.size(); k++) {
+			if (((EntityPlayer) list.get(k)).getName() == mc.player.getName()) {
+				continue;
+			}
+
+			EntityPlayer entityplayer = (EntityPlayer) list.get(1);
+
+			if (mc.player.getDistanceToEntity(entityplayer) > mc.player.getDistanceToEntity((Entity) list.get(k))) {
+				entityplayer = (EntityPlayer) list.get(k);
+			}
+
+			float f = mc.player.getDistanceToEntity(entityplayer);
+
+			if (f < 4F && mc.player.canEntityBeSeen(entityplayer) && delay > 7) {
+				this.faceEntity(entityplayer);
+				mc.playerController.attackEntity(mc.player, entityplayer);
+				mc.player.swingArm(EnumHand.MAIN_HAND);
+				delay = 0;
+				continue;
+			}
+		}
+	}
+
+	public static synchronized void faceEntity(EntityLivingBase entity) {
+		final float[] rotations = getRotationsNeeded(entity);
+
+		if (rotations != null) {
+			Minecraft.getMinecraft().player.rotationYaw = rotations[0];
+			Minecraft.getMinecraft().player.rotationPitch = rotations[1] + 1.0F;// 14
+		}
+	}
+
+	public static float[] getRotationsNeeded(Entity entity) {
+		if (entity == null) {
+			return null;
+		}
+
+		final double diffX = entity.posX - Minecraft.getMinecraft().player.posX;
+		final double diffZ = entity.posZ - Minecraft.getMinecraft().player.posZ;
+		double diffY;
+
+		if (entity instanceof EntityLivingBase) {
+			final EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
+			diffY = entityLivingBase.posY + entityLivingBase.getEyeHeight() - (Minecraft.getMinecraft().player.posY + Minecraft.getMinecraft().player.getEyeHeight());
+		} else {
+			diffY = (entity.boundingBox.minY + entity.boundingBox.maxY) / 2.0D - (Minecraft.getMinecraft().player.posY + Minecraft.getMinecraft().player.getEyeHeight());
+		}
+
+		final double dist = MathHelper.sqrt(diffX * diffX + diffZ * diffZ);
+		final float yaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / Math.PI) - 90.0F;
+		final float pitch = (float) -(Math.atan2(diffY, dist) * 180.0D / Math.PI);
+		return new float[] { Minecraft.getMinecraft().player.rotationYaw + MathHelper.wrapDegrees(yaw - Minecraft.getMinecraft().player.rotationYaw), Minecraft.getMinecraft().player.rotationPitch + MathHelper.wrapDegrees(pitch - Minecraft.getMinecraft().player.rotationPitch) };
+	}
+
+}
