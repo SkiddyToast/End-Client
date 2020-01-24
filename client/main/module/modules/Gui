@@ -1,0 +1,21 @@
+package paradox.client.main.module.modules;
+
+import org.lwjgl.input.Keyboard;
+
+import paradox.client.main.gui.ClickGUI;
+import paradox.client.main.module.Category;
+import paradox.client.main.module.Module;
+
+public class Gui extends Module {
+	public Gui() {
+		super("Click GUI", Category.RENDER, Keyboard.KEY_RSHIFT);
+	}
+	
+	public void onEnable() {
+		if(!this.isEnabled()) {
+			return;
+		}
+		mc.displayGuiScreen(new ClickGUI());
+		toggle();
+	}
+}
