@@ -12,7 +12,6 @@ public class Jesus extends Module {
 	public Jesus() {
 		super("Jesus", Category.MOVEMENT, 0);
 	}
-	//Made By BentleyM15 for this client.
 	@Override
 	public void onPreUpdate() {
 		
