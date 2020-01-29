@@ -2,4 +2,4 @@
 A Minecraft Client for 1.12.2 made by me, SkiddyToast
 
 # Downloading and Testing
-A link will be up soon.
+http://www.mediafire.com/file/hr5hkgol2ipmyvf/End_Client_Release_1.0_Setup.exe/file
