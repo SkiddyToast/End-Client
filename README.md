@@ -1,5 +1,5 @@
 # End Client
-A Minecraft Client for 1.12.2 made by me, SkiddyToast
+A Minecraft Client for 1.12.2 made by SkiddyToast and Ank906.
 
 # End Client Discord
 https://discord.gg/ZWqFXUA
